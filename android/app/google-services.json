@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "180566520671",
+    "project_id": "philipstores-d2b73",
+    "storage_bucket": "philipstores-d2b73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180566520671:android:63b582c08fd629edd47cea",
+        "android_client_info": {
+          "package_name": "com.example.taiwo_clothings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180566520671-2ibto3qula66jf4gp146f66v460971hs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6vtbly_CzQZbkMTxnOg3a1ipTWKBgR2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180566520671-2ibto3qula66jf4gp146f66v460971hs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "180566520671-jio7furvdcp7rr91aiuf8j11kqh5o7lr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.taiwoClothings"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180566520671:android:09fc3a405bdbb0edd47cea",
+        "android_client_info": {
+          "package_name": "com.example.taiwo_ecommerce_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180566520671-2ibto3qula66jf4gp146f66v460971hs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6vtbly_CzQZbkMTxnOg3a1ipTWKBgR2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180566520671-2ibto3qula66jf4gp146f66v460971hs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "180566520671-jio7furvdcp7rr91aiuf8j11kqh5o7lr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.taiwoClothings"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
