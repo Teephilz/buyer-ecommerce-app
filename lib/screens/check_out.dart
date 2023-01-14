@@ -41,7 +41,7 @@ class _CheckOutState extends State<CheckOut> {
       children:usermodelList.map((e) {
         return  Container(
           height: 70,
-          width: 100,
+          width: 150,
           margin: EdgeInsets.symmetric(horizontal: 10),
           padding: EdgeInsets.only(bottom: 10),
           child:
