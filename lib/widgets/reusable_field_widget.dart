@@ -40,7 +40,7 @@ class _reUsableTextFormFieldState extends State<reUsableTextFormField> {
       keyboardType: TextInputType.emailAddress ,
     )
         :
-    TextField(
+    TextFormField(
         controller:widget.controller ,
         obscureText: widget.isObscure! ,
         style: TextStyle(color: Colors.white.withOpacity(0.9)),

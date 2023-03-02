@@ -22,11 +22,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
   bool isHiddenPassword= true;
 
-  void _togglePassword(){
-    setState(() {
-     isHiddenPassword = !isHiddenPassword;
-    });
-  }
+
 
 
  Future<void> SignIn ()async {

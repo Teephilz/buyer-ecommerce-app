@@ -28,16 +28,19 @@ class SearchProduct extends SearchDelegate<void> {
     ProductProvider productProvider=Provider.of(context);
     List<ProductModel> searchproduct =productProvider.searchProductList(query);
 
-    return GridView.count(crossAxisCount: 2,
-      childAspectRatio: 0.7,
-      scrollDirection: Axis.vertical,
-      children: searchproduct.map((e){
-        return SingleProducts(
-            name: e.name,
-            image: e.image,
-            price: e.price,
-            descript: e.descript);
-      }).toList(),);
+    return GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: searchproduct.length,
+        gridDelegate:  const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200,
+            childAspectRatio: 4/6,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 10),
+        itemBuilder: (context, index){
+
+          return SingleProducts(model: searchproduct[index]);
+        });
   }
 
   @override
@@ -45,15 +48,18 @@ class SearchProduct extends SearchDelegate<void> {
     ProductProvider productProvider=Provider.of(context);
     List<ProductModel> searchproduct =productProvider.searchProductList(query);
 
-    return GridView.count(crossAxisCount: 2,
-      childAspectRatio: 0.7,
-      scrollDirection: Axis.vertical,
-      children: searchproduct.map((e){
-        return SingleProducts(
-            name: e.name,
-            image: e.image,
-            price: e.price,
-            descript: e.descript);
-      }).toList(),);
+    return GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: searchproduct.length,
+        gridDelegate:  const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200,
+            childAspectRatio: 4/6,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 10),
+        itemBuilder: (context, index){
+
+          return SingleProducts(model: searchproduct[index]);
+        });
   }
 }

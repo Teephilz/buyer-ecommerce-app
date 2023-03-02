@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taiwo_ecommerce_app/provider/cart_provider.dart';
 import 'package:taiwo_ecommerce_app/provider/product_provider.dart';
 import 'package:taiwo_ecommerce_app/screens/check_out.dart';
 import 'package:taiwo_ecommerce_app/widgets/cart_single_product.dart';
 import 'package:provider/provider.dart';
 
-import '../model/cart_model.dart';
-import '../widgets/notification_button.dart';
 class CartScreen extends StatefulWidget {
 
   @override
@@ -16,8 +15,8 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-   final productProvider= Provider.of<ProductProvider>(context);
-    final cartmodelist= productProvider.getCartModelList;
+   final provider= Provider.of<CartProvider>(context);
+    final cartmodelist= provider.getCartModelList;
 
     return Scaffold(
         appBar: AppBar(
@@ -25,7 +24,7 @@ class _CartScreenState extends State<CartScreen> {
           elevation: 0.0,
           backgroundColor: Colors.deepOrangeAccent,
           actions: <Widget>[
-            NotificationButton()
+
           ],
         ),
         bottomNavigationBar: Container(
@@ -41,7 +40,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
             onPressed: ()
             {
-              productProvider.addNotification("Notification");
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CheckOut(
 
@@ -53,16 +51,11 @@ class _CartScreenState extends State<CartScreen> {
           )),
 
         body: ListView.builder(
-            itemCount:productProvider.getCartModelListLength,
+            itemCount:provider.getCartModelListLength,
             itemBuilder:(context, index){
               return  CartSingleProduct(
               index: index,
-              name:  cartmodelist[index].name,
-              image: cartmodelist[index].image,
-             quantity: cartmodelist[index].quantity,
-              size:  cartmodelist[index].size,
-              color:  cartmodelist[index].color,
-              price: cartmodelist[index].price);}));
+              model: cartmodelist[index],);}));
             }
 
   }

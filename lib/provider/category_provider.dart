@@ -12,21 +12,27 @@ class CategoryProvider with ChangeNotifier{
   List<ProductModel>trouserList=[];
   List<ProductModel>sweaterList=[];
   List<ProductModel>watchList=[];
+  List<ProductModel>otherList=[];
 
 
   Future<void> getShirtData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot shirtsnapShot= await FirebaseFirestore.instance.collection("category")
-    .doc("OlGbeoKClOEnQFclxLdo")
-    .collection("TShirt")
+    QuerySnapshot shirtsnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "Tshirt").orderBy("publishedDate", descending: true)
     .get();
     shirtsnapShot.docs.forEach(
       (element) {
      ProductModel shirtData=  ProductModel(
-       descript: element.get("descript"),
-        image: element.get("image"),
-        name: element.get("name"),
-        price: element.get("price"));
+       itemID: element["itemID"],
+       itemTitle: element["itemTitle"],
+       longDescription:  element["longDescription"],
+       price:  element["price"],
+       publishedDate:  element["publishedDate"],
+       sellerName:  element["sellerName"],
+       sellerUID:  element["sellerUID"],
+       type:   element["type"],
+       image:  element["image"],
+      );
      newList.add(shirtData);
       });
      shirtList=newList;
@@ -40,17 +46,21 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getBlazerData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot blazersnapShot= await FirebaseFirestore.instance.collection("category")
-        .doc("OlGbeoKClOEnQFclxLdo")
-        .collection("blazer")
+    QuerySnapshot blazersnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "blazer").orderBy("publishedDate", descending: true)
         .get();
     blazersnapShot.docs.forEach(
             (element) {
        ProductModel  blazerData=  ProductModel(
-              descript: element.get("descript"),
-              image: element.get("image"),
-              name: element.get("name"),
-              price: element.get("price"));
+         itemID: element["itemID"],
+         itemTitle: element["itemTitle"],
+         longDescription:  element["longDescription"],
+         price:  element["price"],
+         publishedDate:  element["publishedDate"],
+         sellerName:  element["sellerName"],
+         sellerUID:  element["sellerUID"],
+         type:   element["type"],
+         image:  element["image"],);
             newList.add(blazerData);
         });
     blazerList=newList;
@@ -64,17 +74,21 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getShoesData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot shoesnapShot= await FirebaseFirestore.instance.collection("category")
-        .doc("OlGbeoKClOEnQFclxLdo")
-        .collection("shoes")
+    QuerySnapshot shoesnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "shoe").orderBy("publishedDate", descending: true)
         .get();
     shoesnapShot.docs.forEach(
             (element) {
          ProductModel shoeData=  ProductModel(
-              descript: element.get("descript"),
-              image: element.get("image"),
-              name: element.get("name"),
-              price: element.get("price"));
+           itemID: element["itemID"],
+           itemTitle: element["itemTitle"],
+           longDescription:  element["longDescription"],
+           price:  element["price"],
+           publishedDate:  element["publishedDate"],
+           sellerName:  element["sellerName"],
+           sellerUID:  element["sellerUID"],
+           type:   element["type"],
+           image:  element["image"],);
          newList.add(shoeData);
         });
     shoeList=newList;
@@ -90,17 +104,21 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getShortsData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot shortsnapShot= await FirebaseFirestore.instance.collection("category")
-        .doc("OlGbeoKClOEnQFclxLdo")
-        .collection("shorts")
+    QuerySnapshot shortsnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "shorts").orderBy("publishedDate", descending: true)
         .get();
     shortsnapShot.docs.forEach(
             (element) {
           ProductModel shortData=  ProductModel(
-              descript: element.get("descript"),
-              image: element.get("image"),
-              name: element.get("name"),
-              price: element.get("price"));
+            itemID: element["itemID"],
+            itemTitle: element["itemTitle"],
+            longDescription:  element["longDescription"],
+            price:  element["price"],
+            publishedDate:  element["publishedDate"],
+            sellerName:  element["sellerName"],
+            sellerUID:  element["sellerUID"],
+            type:   element["type"],
+            image:  element["image"],);
           newList.add(shortData);
         });
     shortList=newList;
@@ -115,17 +133,21 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getSweaterData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot shoesnapShot= await FirebaseFirestore.instance.collection("category")
-        .doc("OlGbeoKClOEnQFclxLdo")
-        .collection("sweater")
+    QuerySnapshot shoesnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "sweater").orderBy("publishedDate", descending: true)
         .get();
     shoesnapShot.docs.forEach(
             (element) {
         ProductModel  sweaterData=  ProductModel(
-              descript: element.get("descript"),
-              image: element.get("image"),
-              name: element.get("name"),
-              price: element.get("price"));
+          itemID: element["itemID"],
+          itemTitle: element["itemTitle"],
+          longDescription:  element["longDescription"],
+          price:  element["price"],
+          publishedDate:  element["publishedDate"],
+          sellerName:  element["sellerName"],
+          sellerUID:  element["sellerUID"],
+          type:   element["type"],
+          image:  element["image"],);
         newList.add(sweaterData);
         });
     sweaterList=newList;
@@ -139,17 +161,21 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getTrouserData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot trousersnapShot= await FirebaseFirestore.instance.collection("category")
-        .doc("OlGbeoKClOEnQFclxLdo")
-        .collection("trouser")
+    QuerySnapshot trousersnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "trouser").orderBy("publishedDate", descending: true)
         .get();
     trousersnapShot.docs.forEach(
             (element) {
           ProductModel trouserData=  ProductModel(
-              descript: element.get("descript"),
-              image: element.get("image"),
-              name: element.get("name"),
-              price: element.get("price"));
+            itemID: element["itemID"],
+            itemTitle: element["itemTitle"],
+            longDescription:  element["longDescription"],
+            price:  element["price"],
+            publishedDate:  element["publishedDate"],
+            sellerName:  element["sellerName"],
+            sellerUID:  element["sellerUID"],
+            type:   element["type"],
+            image:  element["image"],);
          newList.add(trouserData);
         });
     trouserList=newList;
@@ -163,17 +189,21 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getWatchData() async{
     List<ProductModel> newList= [];
-    QuerySnapshot watchsnapShot= await FirebaseFirestore.instance.collection("category")
-        .doc("OlGbeoKClOEnQFclxLdo")
-        .collection("wristwatch")
+    QuerySnapshot watchsnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "wristWatch").orderBy("publishedDate", descending: true)
         .get();
     watchsnapShot.docs.forEach(
             (element) {
           ProductModel watchData=  ProductModel(
-              descript: element.get("descript"),
-              image: element.get("image"),
-              name: element.get("name"),
-              price: element.get("price"));
+            itemID: element["itemID"],
+            itemTitle: element["itemTitle"],
+            longDescription:  element["longDescription"],
+            price:  element["price"],
+            publishedDate:  element["publishedDate"],
+            sellerName:  element["sellerName"],
+            sellerUID:  element["sellerUID"],
+            type:   element["type"],
+            image:  element["image"],);
           newList.add(watchData);
         });
     watchList=newList;
@@ -184,6 +214,33 @@ class CategoryProvider with ChangeNotifier{
 
   }
 
+  Future<void> getOtherData() async{
+    List<ProductModel> newList= [];
+    QuerySnapshot watchsnapShot= await FirebaseFirestore.instance.collection("items")
+        .where("type", isEqualTo: "other").orderBy("publishedDate", descending: true)
+        .get();
+    watchsnapShot.docs.forEach(
+            (element) {
+          ProductModel watchData=  ProductModel(
+            itemID: element["itemID"],
+            itemTitle: element["itemTitle"],
+            longDescription:  element["longDescription"],
+            price:  element["price"],
+            publishedDate:  element["publishedDate"],
+            sellerName:  element["sellerName"],
+            sellerUID:  element["sellerUID"],
+            type:   element["type"],
+            image:  element["image"],);
+          newList.add(watchData);
+        });
+    otherList=newList;
+    notifyListeners();
+  }
+  List<ProductModel> get getOtherList{
+    return otherList;
+
+  }
+
    List<ProductModel> searchlist =[];
   void getSearchList({required List<ProductModel>list}){
     searchlist=list;
@@ -191,8 +248,8 @@ class CategoryProvider with ChangeNotifier{
   }
   List<ProductModel> searchCategoryList(String query){
     List<ProductModel> searchCategory = searchlist.where((element){
-      return element.name.toUpperCase().contains(query) ||
-          element.name.toLowerCase().contains(query);
+      return element.itemTitle!.toUpperCase().contains(query) ||
+          element.itemTitle!.toLowerCase().contains(query);
     }).toList();
     return searchCategory;
   }

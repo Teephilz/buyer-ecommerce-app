@@ -13,19 +13,16 @@ class   HomeListProducts extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 270,
-        child: GridView.count(
-          crossAxisCount: 1,
-          childAspectRatio: 7/5,
+        child:
+        GridView.count(
           scrollDirection: Axis.horizontal,
+          crossAxisCount: 1,
+          childAspectRatio: 1.4,
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 5,
           children: snapShot.map((e){
-              return SingleProducts(
-                  name: e.name,
-                  image: e.image,
-                  price: e.price,
-                  descript: e.descript);}).toList(),
-
-
-        )
+            return SingleProducts(model: e);
+          }).toList(),)
     );
   }
 

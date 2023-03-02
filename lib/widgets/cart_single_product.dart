@@ -1,17 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:taiwo_ecommerce_app/provider/cart_provider.dart';
 import 'package:taiwo_ecommerce_app/provider/product_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../model/cart_model.dart';
 class CartSingleProduct extends StatefulWidget {
-  final String name;
-  final String image;
-  int quantity;
-  final String color;
-  final String size;
-  final double price;
+  CartModel model;
   final int index;
 
-  CartSingleProduct({required this.name, required this.image,
-    required this.quantity, required this.size, required this.color,required this.price, required this.index});
+
+
+  CartSingleProduct({
+    required this.model,
+    required this.index
+  });
 
 
   @override
@@ -21,7 +25,8 @@ class CartSingleProduct extends StatefulWidget {
 class _CartSingleProductState extends State<CartSingleProduct> {
   @override
   Widget build(BuildContext context) {
-    ProductProvider productProvider=Provider.of<ProductProvider>(context);
+    var formatter=NumberFormat.decimalPattern('en_us');
+    var provider=Provider.of<CartProvider>(context);
 
     return Container(
           height: 190,
@@ -35,7 +40,7 @@ class _CartSingleProductState extends State<CartSingleProduct> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.fill,
-                            image: NetworkImage(widget.image))
+                            image: NetworkImage(widget.model.model!.image.toString()))
                     )
                 ),
 
@@ -52,20 +57,20 @@ class _CartSingleProductState extends State<CartSingleProduct> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Text(widget.name,style: TextStyle(fontSize: 18,
+                                child: Text(widget.model.model!.itemTitle!,style: TextStyle(fontSize: 18,
                                   fontWeight: FontWeight.bold)),
                               ),
 
                               Expanded(
                                 child: IconButton(onPressed:
                                     (){
-                                      productProvider.deleteCartProduct(widget.index);
+                                      provider.deleteCartProduct(widget.index);
                                     },
-                                    icon: Icon(Icons.close,color: Colors.black)),
+                                    icon: Icon(Icons.cancel,color: Colors.black)),
                               )
                             ]
                           ),
-                          Text("\$ ${widget.price} ",style: TextStyle(fontSize: 18,
+                          Text("₦${formatter.format(double.parse(widget.model.model!.price.toString()))}" ,style: TextStyle(fontSize: 18,
                               fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent)),
 
                       Container(
@@ -82,27 +87,19 @@ class _CartSingleProductState extends State<CartSingleProduct> {
                             children: [
                               Text("Quantity:",style:TextStyle(color: Colors.black,fontSize: 17),),
 
-                              Text(widget.quantity .toString() , style: TextStyle(fontSize: 18),),
+                              Text(widget.model.quantity .toString() , style: TextStyle(fontSize: 18),),
 
                             ],
                           ),
                         ),
 
                       ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                          Text("Color:",style:TextStyle(color: Colors.black,fontSize: 17, fontWeight: FontWeight.bold),),
-                          SizedBox(width:25),
-                          Text(widget.color, style: TextStyle(fontSize: 18),),
-
-                        ],),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                             Text("Size:",style:TextStyle(color: Colors.black,fontSize: 17, fontWeight: FontWeight.bold),),
                               SizedBox(width:25),
-                            Text(widget.size , style: TextStyle(fontSize: 18),),
+                            Text(widget.model.size! , style: TextStyle(fontSize: 18),),
 
                           ],),
                       ]

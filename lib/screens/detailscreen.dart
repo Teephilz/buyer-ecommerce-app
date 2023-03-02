@@ -1,17 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:taiwo_ecommerce_app/provider/cart_provider.dart';
 import 'package:taiwo_ecommerce_app/provider/product_provider.dart';
 import 'package:taiwo_ecommerce_app/screens/check_out.dart';
 import 'package:provider/provider.dart';
-import '../widgets/notification_button.dart';
+import '../model/products_model.dart';
 import 'cart_scr.dart';
 class DetailScreen extends StatefulWidget {
-  final String image;
-  final String name;
-  final double price;
-  final String descript;
+ ProductModel model;
 
 
-  DetailScreen({required this.image, required this.name,required this.price, required this.descript, });
+  DetailScreen({
+   required this.model
+});
 
 
   @override
@@ -22,14 +25,6 @@ class _DetailScreenState extends State<DetailScreen> {
   int count= 1;
 
 
-  Widget _buildColorProduct({required Color color}){
-    return Container(
-      height: 40,
-      width: 40,
-      color: color
-      );
-
-  }
 var isSelected = [true, false, false, false];
 var colored= [true, false, false, false];
   int sizeIndex= 0;
@@ -64,34 +59,10 @@ var colored= [true, false, false, false];
   }
 
 
-  void getColor(){
-    if(colorIndex == 0){
-      setState(() {
-        color= "blue";
-
-      });
-    }else if(colorIndex == 1){
-      setState(() {
-        color= "green";
-
-      });
-    }
-    else if(colorIndex == 2){
-      setState(() {
-        color= "yellow";
-
-      });
-    }
-    else if(colorIndex == 3){
-      setState(() {
-        color= "orange";
-
-      });
-    }
-  }
   @override
   Widget build(BuildContext context) {
-   var productProvider=Provider.of<ProductProvider>(context);
+    var formatter=NumberFormat.decimalPattern('en_us');
+   var provider=Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Product Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
@@ -100,7 +71,48 @@ var colored= [true, false, false, false];
         backgroundColor: Colors.deepOrangeAccent,
 
         actions: <Widget>[
-          NotificationButton()
+          Stack(
+            children: [
+              IconButton(
+                onPressed: ()
+                {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>CartScreen()));
+                  },
+
+                icon: const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                ),
+              ),
+              Positioned(
+                child: Stack(
+                  children: [
+
+                    const Icon(
+                      Icons.brightness_1,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+
+                    Positioned(
+                      top: 2,
+                      right: 6,
+                      child: Center(
+                        child: Text(
+                              "${provider.getCartModelListLength}",
+                              style: const TextStyle(
+                                color: Colors.black,
+                              ),
+                            )
+
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
 
@@ -124,7 +136,7 @@ var colored= [true, false, false, false];
                         height: 220,
                         decoration: BoxDecoration(
                           image: DecorationImage( fit:BoxFit.fill,
-                              image: NetworkImage(widget.image)
+                              image: NetworkImage(widget.model.image.toString())
                         )
                       ),
                   ),
@@ -141,8 +153,8 @@ var colored= [true, false, false, false];
                       mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.name.toString(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text("\$ ${widget.price.toString()}", style: TextStyle(fontSize: 18, color: Colors.deepOrangeAccent,fontWeight: FontWeight.bold)),
+                        Text(widget.model.itemTitle!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text("₦${formatter.format(double.parse(widget.model.price.toString()))}", style: TextStyle(fontSize: 18, color: Colors.deepOrangeAccent,fontWeight: FontWeight.bold)),
 
                       ],
                     )
@@ -156,7 +168,7 @@ var colored= [true, false, false, false];
                   height: 100,
                   child: Wrap(
                     children: [
-                      Text(widget.descript)
+                      Text(widget.model.longDescription!)
                     ],
                   ),
                 ),
@@ -203,48 +215,6 @@ var colored= [true, false, false, false];
                   height: 10,
                 ),
 
-                Text("Color",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-
-                SizedBox(
-                  height: 10,
-                ),
-
-
-                Container(
-                    width:265,
-                    child: ToggleButtons(
-                      fillColor: Colors.blueAccent,
-                      renderBorder: false,
-                      children: [
-                        _buildColorProduct(color: Colors.blueAccent.withOpacity(0.6)),
-                        _buildColorProduct(color: Colors.green.withOpacity(0.6)),
-                        _buildColorProduct(color: Colors.yellow.withOpacity(0.6)),
-                        _buildColorProduct(color: Colors.orangeAccent.withOpacity(0.6)),
-
-                      ],
-
-                      onPressed: (int index){
-                        setState(() {
-                          for(int indexBtn=0; indexBtn< colored.length; indexBtn++){
-                            if(indexBtn== index){
-                             colored[indexBtn]= true;
-                            }else{
-                              colored[indexBtn]= false;
-                            }
-                          }
-                        });
-                        setState(() {
-                          colorIndex=index;
-                        });
-                      },
-
-                      isSelected:colored,
-                    )
-                ),
-
-                SizedBox(
-                  height: 10,
-                ),
 
                 Text("Quantity",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
 
@@ -301,17 +271,19 @@ var colored= [true, false, false, false];
                       ),
                       onPressed: ()
                       {
-                        getSize();
-                        getColor();
-                        productProvider.getCartData(
-                          image:widget.image,
-                          name: widget.name,
-                          size:size,
-                          color:color,
-                          price: widget.price,
-                          quantity: count,
-                        );
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen()));
+                        if(provider.getCartProductModels().contains(widget.model)){
+                          Fluttertoast.showToast(msg: "item is already in the cart");
+
+                        }
+                        else{
+                          getSize();
+                          provider.getCartData(
+                         model: widget.model,
+                          size:  size,
+                          quantity: count.toString()
+                          );
+                          Fluttertoast.showToast(msg: "item added to cart");
+                        }
 
                       },
                       child: Text('Add to Cart', style: TextStyle(fontSize: 17, color: Colors.white,fontWeight: FontWeight.bold),),

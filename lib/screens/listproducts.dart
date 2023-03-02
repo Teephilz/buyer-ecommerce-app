@@ -34,7 +34,6 @@ bool isCategory =true;
             productProvider.getSearchList(list: snapShot);
             showSearch(context: context, delegate: SearchProduct());
           }),
-          IconButton( icon: Icon(Icons.notifications_none),onPressed: (){})
         ],
       ),
 
@@ -57,20 +56,16 @@ bool isCategory =true;
               ),
               Container(
                 height: 700,
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                  childAspectRatio: 0.7,
-                  scrollDirection: Axis.vertical,
-                    children: snapShot.map((e) {
-                      return SingleProducts(
-                        name: e.name,
-                        image:
-                        e.image,
-                        price: e.price,
-                       descript: e.descript);}).toList(),
+                  child:
+                  GridView.count(
+                      crossAxisCount: 2,
+                      childAspectRatio: 4/6,
+                      mainAxisSpacing: 5,
+                      crossAxisSpacing: 5,
+                      children: snapShot.map((e){
+                        return SingleProducts(model: e);
+                      }).toList(),)
 
-
-                ),
               )
             ],
       ));

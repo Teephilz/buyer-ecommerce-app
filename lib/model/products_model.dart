@@ -1,11 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
  class ProductModel {
-   final String descript;
-   final String image;
-   final String name;
-   final num price;
+   String? itemID;
+   String? itemTitle;
+   String? longDescription;
+   String? price;
+   Timestamp? publishedDate;
+   String? sellerName;
+   String? sellerUID;
+   String? type;
+   String? image;
 
 
-   ProductModel({required this.descript,required this.image,required this.name, required this.price});
+   ProductModel({
+     this.itemID,
+     this.itemTitle,
+     this.longDescription,
+     this.price,
+     this.publishedDate,
+     this.sellerName,
+     this.sellerUID,
+     this.type,
+     this.image,
+  }
+ );
  }

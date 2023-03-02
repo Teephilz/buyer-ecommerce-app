@@ -3,19 +3,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taiwo_ecommerce_app/model/products_model.dart';
 import 'package:taiwo_ecommerce_app/model/user_model.dart';
+import 'package:taiwo_ecommerce_app/provider/cart_provider.dart';
 import 'package:taiwo_ecommerce_app/provider/category_provider.dart';
 import 'package:taiwo_ecommerce_app/provider/product_provider.dart';
+import 'package:taiwo_ecommerce_app/provider/user_provider.dart';
 import 'package:taiwo_ecommerce_app/screens/cart_scr.dart';
 import 'package:taiwo_ecommerce_app/screens/home_listproduct.dart';
 import 'package:taiwo_ecommerce_app/screens/login_screen.dart';
+import 'package:taiwo_ecommerce_app/screens/order_screen.dart';
 import 'package:taiwo_ecommerce_app/screens/profile_page.dart';
 import 'package:taiwo_ecommerce_app/screens/search_category.dart';
-import 'package:taiwo_ecommerce_app/widgets/notification_button.dart';
 
 
 import 'package:provider/provider.dart';
 
 import '../model/products_model.dart';
+import '../provider/order_provider.dart';
 import 'listproducts.dart';
 class HomePage extends StatefulWidget {
 
@@ -59,7 +62,6 @@ class _HomePageState extends State<HomePage> {
         subtitle: Container(
           alignment: Alignment.topCenter,
           child: Text(name,style: TextStyle(fontSize: 12),
-
           ),
 
         ),
@@ -68,21 +70,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildAccountDrawerHeader(){
-    ProductProvider productprovider = Provider.of<ProductProvider>(context);
-    productprovider.getUserData();
-    List<UserModel> userModel= productprovider.getUsermodelList;
+    var provider = Provider.of<UserProvider>(context);
+    provider.getUserData();
+    final userModel= provider.getUsermodelList;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: userModel.map((e) =>
             UserAccountsDrawerHeader(
               accountName:
-              Text(e.username),
+              Text(e.username,style: TextStyle(color: Colors.white,
+              fontSize: 16)),
               accountEmail:
-              Text(e.useremail),
+              Text(e.useremail,style: TextStyle(color: Colors.white),),
               currentAccountPicture: GestureDetector(
                 onTap: (){
                 },
                 child:  CircleAvatar(
-                    radius: 20,
+                    radius: 25,
                     backgroundImage: NetworkImage(e.userImage)
 
                 ),
@@ -105,6 +110,7 @@ class _HomePageState extends State<HomePage> {
     cartegoryprovider.getTrouserData();
     cartegoryprovider.getSweaterData();
     cartegoryprovider.getWatchData();
+    cartegoryprovider.getOtherData();
 
    final shirts= cartegoryprovider.getShirtList;
    final blazers= cartegoryprovider.getBlazerList;
@@ -113,6 +119,7 @@ class _HomePageState extends State<HomePage> {
    final trousers= cartegoryprovider.getTrouserList;
    final sweaters= cartegoryprovider.getSweaterList;
   final watches= cartegoryprovider.getWatchList;
+  final others=cartegoryprovider.getOtherList;
 
     ProductProvider productprovider = Provider.of<ProductProvider>(context);
     productprovider.getFeatureData();
@@ -131,78 +138,155 @@ class _HomePageState extends State<HomePage> {
 
 
     return Scaffold(
-        drawer: Drawer(
-          child:ListView(
-            children:<Widget> [
-            _buildAccountDrawerHeader(),
-              //create the body forthe drawer
-              InkWell(
-                child: ListTile (
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>ProfileScreen() ));
-                  },
-                  title: Text('Profile'),
-                  leading: Icon(Icons.person, color: Colors.deepOrangeAccent),
-                ),
+        drawer: Consumer2<CartProvider,OrderProvider>(builder: (context,cartProvider, provider,c){
+          provider.getOrderData();
+          return
+            Drawer(
+              child:ListView(
+                children:<Widget> [
+                  _buildAccountDrawerHeader(),
+                  //create the body forthe drawer
+                  InkWell(
+                    child: ListTile (
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>ProfileScreen() ));
+                      },
+                      title: Text('Profile'),
+                      leading: Icon(Icons.person, color: Colors.deepOrangeAccent),
+                    ),
+                  ),
+
+                  InkWell(
+                    child: ListTile (
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen(
+                          ) ));
+                        },
+                        title: Text('Shopping Cart'),
+                        leading: Stack(
+                          children: [
+                            IconButton(
+                              onPressed: ()
+                              {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>CartScreen()));
+                              },
+
+                              icon: const Icon(
+                                Icons.shopping_cart,
+                                color: Colors.deepOrangeAccent,
+                              ),
+                            ),
+                            Positioned(
+                              child: Stack(
+                                children: [
+
+                                  const Icon(
+                                    Icons.brightness_1,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+
+                                  Positioned(
+                                    top: 2,
+                                    right: 6,
+                                    child: Center(
+                                        child: Text(
+                                          "${cartProvider.getCartModelListLength}",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        )
+
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                    ),
+                  ),
+
+                  Divider(),
+
+                  InkWell(
+                    child: ListTile (
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderScreen()));
+                      },
+                      title: Text('Orders'),
+                      leading: Stack(
+                        children: [
+                          IconButton(
+                            onPressed: ()
+                            {
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderScreen()));
+                            },
+
+                            icon: const Icon(
+                              Icons.shopping_basket_rounded,
+                              color: Colors.deepOrangeAccent,
+                            ),
+                          ),
+                          Positioned(
+                            child: Stack(
+                              children: [
+
+                                const Icon(
+                                  Icons.brightness_1,
+                                  size: 20,
+                                  color: Colors.black,
+                                ),
+
+                                Positioned(
+                                  top: 2,
+                                  right: 6,
+                                  child: Center(
+                                      child: Text(
+                                        "${provider.getOrderListLength}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      )
+
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  InkWell(
+                    child: ListTile (
+                      onTap: (){
+                        FirebaseAuth.instance.signOut().then((value) {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => LogInScreen()));
+                        }
+                        );
+
+                      },
+                      title: Text('Log Out'),
+                      leading: Icon(Icons.exit_to_app, color: Colors.deepOrange,),
+                    ),
+                  ),
+
+                ],
               ),
 
-              InkWell(
-                child: ListTile (
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen(
-                      ) ));
-                    },
-                    title: Text('Shopping Cart'),
-                    leading: Icon(Icons.shopping_cart,color: Colors.deepOrangeAccent)
-                ),
-              ),
-
-              InkWell(
-                child: ListTile (
-                    onTap: (){},
-                    title: Text('Contact Us'),
-                    leading: Icon(Icons.phone,color: Colors.deepOrangeAccent)
-                ),
-              ),
-
-
-
-              Divider(),
-
-              InkWell(
-                child: ListTile (
-                  onTap: (){},
-                  title: Text('About'),
-                  leading: Icon(Icons.help, color: Colors.deepOrange,),
-                ),
-              ),
-
-              InkWell(
-                child: ListTile (
-                  onTap: (){
-                    FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => LogInScreen()));
-                    }
-                    );
-
-                  },
-                  title: Text('Log Out'),
-                  leading: Icon(Icons.exit_to_app, color: Colors.deepOrange,),
-                ),
-              ),
-
-            ],
-          ),
-
-        ),
+            );
+        },),
         appBar: AppBar(
           title: Text("HomePage", style: TextStyle(color: Colors.white, fontSize: 24),),
           centerTitle: true,
           elevation:0.0,
           backgroundColor: Colors.deepOrangeAccent,
           actions: <Widget> [
-            NotificationButton(),
 
           ],
         ),
@@ -310,6 +394,17 @@ class _HomePageState extends State<HomePage> {
                       },
                       child: _buildCategoryProduct(image: "images/wristvct.jpg",
                           name: "Wrist watch"),
+                    ),
+
+                    GestureDetector(
+                      onTap:(){
+                        Navigator.push(context, MaterialPageRoute(builder:
+                            (context) => ListProducts(name: "Others",
+                          snapShot:others,
+                          isCategory: true,)));
+                      },
+                      child: _buildCategoryProduct(image: "images/other.jpg",
+                          name: "Others"),
                     ),
                   ],
 

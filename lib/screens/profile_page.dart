@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taiwo_ecommerce_app/provider/product_provider.dart';
+import 'package:taiwo_ecommerce_app/provider/user_provider.dart';
 import 'package:taiwo_ecommerce_app/widgets/my_button.dart';
-import 'package:taiwo_ecommerce_app/widgets/notification_button.dart';
 import 'package:provider/provider.dart';
 
 import '../model/user_model.dart';
@@ -25,18 +25,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late File pickedImage;
-  late String imageUrl;
-  late String userImage;
-
-  @override
-  void initState() {
-    pickedImage= File("");
-    imageUrl= "";
-    userImage="";
-    // TODO: implement initState
-    super.initState();
-  }
+  String imageUrl = "";
+  File pickedImage = File("");
+  XFile? _imgXfile;
+  bool uploading= false;
 
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   TextEditingController _usernameTextController = TextEditingController();
@@ -45,9 +37,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   Future<void> getImage({required ImageSource source}) async {
-    final PickedFile? _image = await ImagePicker().getImage(source: source);
-    if (_image != null) {
-      pickedImage = File(_image.path);
+    _imgXfile = await ImagePicker().pickImage(source: source);
+    if (_imgXfile != null) {
+      pickedImage = File(_imgXfile!.path);
+      setState(() {
+        _imgXfile;
+      });
     }
   }
 
@@ -84,6 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   Future<void> uploadImage({required File image}) async {
+   setState(() {
+     uploading = true;
+   });
     User? user = FirebaseAuth.instance.currentUser;
     Reference storageReference = FirebaseStorage.instance.ref().child(
         "UserImage/${user?.uid}");
@@ -93,7 +91,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     FirebaseFirestore.instance.collection("User").doc(user?.uid).update({
       "UserImage": imageUrl
     });
-    
+   setState(() {
+     uploading = false;
+   });
     
   }
 
@@ -135,11 +135,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Text(startText, style: TextStyle(
-                  fontSize: 17, color: Colors.black45
-              ),),
-            ),
+            Text(startText, style: TextStyle(
+                fontSize: 17, color: Colors.black45
+            ),),
+            SizedBox(width: 30,),
             Expanded(
               child: Text(endText, style: TextStyle(
                   fontSize: 17, color: Colors.black,
@@ -180,9 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool edit = false;
 
   Widget _buildTextFormFieldpart() {
-    ProductProvider productProvider = Provider.of<ProductProvider>(context);
-    productProvider.getUserData();
-    List<UserModel>usermodel = productProvider.getUsermodelList;
+    var provider = Provider.of<UserProvider>(context);
+    provider.getUserData();
+    final usermodel = provider.getUsermodelList;
 
     return
       Column(
@@ -214,13 +213,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   Widget _buildContainerPart() {
-    ProductProvider productProvider = Provider.of<ProductProvider>(context);
-    productProvider.getUserData();
-    List<UserModel>usermodel = productProvider.getUsermodelList;
+   var provider = Provider.of<UserProvider>(context);
+    provider.getUserData();
+    final users = provider.getUsermodelList;
 
     return Column(
-        children: usermodel.map((e) {
-          userImage= e.userImage;
+        children: users.map((e) {
+          imageUrl= e.userImage;
           _usernameTextController = TextEditingController(text: e.username);
           _phoneTextController=TextEditingController(text: e.userPhonenumber);
           _addressTextController=TextEditingController(text:e.userAddress);
@@ -249,6 +248,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<UserProvider>(context);
+    provider.getUserData();
+    final users = provider.getUsermodelList;
     return Scaffold(
         key: _scaffoldkey,
         backgroundColor: Colors.white60.withOpacity(0.9),
@@ -269,12 +271,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           elevation: 0.0,
           backgroundColor: Colors.deepOrangeAccent,
           actions: [
-            edit == false ? NotificationButton() :
+            edit == false ? Container() :
                 GestureDetector(onTap: (){
                   uploadImage(image: pickedImage);
-                  setState(() {
-                    edit = false;
-                  });
+                  // setState(() {
+                  //   edit = false;
+                  // });
                 },
                     child: Row(
                   children: [
@@ -302,8 +304,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Container(
                 height: double.infinity,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    uploading== true? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LinearProgressIndicator(),
+                    ):Container(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Stack(
@@ -315,12 +321,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  CircleAvatar(
-                                      maxRadius: 75,
-                                      backgroundImage: userImage ==""? AssetImage("images/userimage.png")
-                                    :  NetworkImage(userImage)
-                                       as ImageProvider
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                      ShowImage(imageUrl: imageUrl)));
+                                    },
+                                    child: CircleAvatar(
+                                        maxRadius: 75,
+                                      backgroundImage: _imgXfile == null
+                                          ?( users.first.userImage== ""
+                                          ? const AssetImage(
+                                          'images/userimage.png')
+                                          : NetworkImage(users.elementAt(0).userImage
+                                          .toString())
+                                      as ImageProvider)
+                                          : FileImage(pickedImage),
 
+                                    ),
                                   )
                                 ],
                               ),
@@ -351,6 +368,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
 
+
+                    SizedBox(
+                      height: 50,
+                    ),
+
                     Container(
                         height: 330,
                         width: double.infinity,
@@ -358,6 +380,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ? _buildTextFormFieldpart()
                             : _buildContainerPart()
                     ),
+
+
+                    SizedBox(
+                      height: 60,
+                    ),
+
                     edit == false ? MyButton(buttonName: "Edit Profile",
                       onPressed: () {
                         setState(() {
@@ -380,6 +408,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         )
+    );
+  }
+}
+class ShowImage extends StatelessWidget {
+  final String imageUrl;
+  ShowImage({required this.imageUrl,});
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      body: Container(
+        height: size.height,
+        width: size.width,
+        color: Colors.black,
+        child: Image.network(imageUrl),
+      ),
     );
   }
 }
